@@ -9,8 +9,6 @@ import com.marketplace.shared.exception.BusinessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-public record TokenPair(String accessToken, String refreshToken) {}
-
 @Service
 public class LoginUseCase {
 
