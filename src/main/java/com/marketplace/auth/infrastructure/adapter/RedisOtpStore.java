@@ -36,6 +36,13 @@ public class RedisOtpStore implements OtpStore {
         return false;
     }
 
+    @Override
+    public boolean tryStartResendCooldown(String email) {
+        Boolean acquired = redis.opsForValue()
+                .setIfAbsent("resend-cooldown:" + email, "1", Duration.ofSeconds(60));
+        return Boolean.TRUE.equals(acquired);
+    }
+
     private String key(String email) {
         return "otp:" + email;
     }

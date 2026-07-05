@@ -15,7 +15,7 @@ logs:            ## Xem logs infrastructure
 ps:              ## Trạng thái các container
 	docker compose ps
 
-run: up          ## Bật infra + chạy app
+run:           ## Bật infra + chạy app
 	./mvnw spring-boot:run
 
 dev: up          ## Chạy app với profile dev
@@ -34,11 +34,11 @@ reset-db:        ## Xóa sạch DB và data, tạo lại
 	docker compose down -v
 	docker compose up -d
 
-db:              ## Mở psql console vào database
-	docker exec -it marketplace-postgres psql -U marketplace -d marketplace
-
 mail:            ## Mở Mailhog UI
 	open http://localhost:8025
+
+dbgate:          ## Mở DbGate UI (xem DB bằng trình duyệt)
+	open http://localhost:3100
 
 swagger:         ## Mở Swagger UI
 	open http://localhost:8080/swagger-ui.html

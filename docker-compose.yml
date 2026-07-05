@@ -57,6 +57,27 @@ services:
       - "1025:1025"  # SMTP
       - "8025:8025"  # Web UI
 
+  dbgate:
+    image: dbgate/dbgate:latest
+    container_name: marketplace-dbgate
+    ports:
+      - "3100:3000"  # Web UI
+    environment:
+      CONNECTIONS: pg
+      LABEL_pg: Marketplace DB
+      SERVER_pg: postgres        # tên service trong compose network
+      PORT_pg: 5432
+      USER_pg: marketplace
+      PASSWORD_pg: marketplace
+      DATABASE_pg: marketplace
+      ENGINE_pg: postgres@dbgate-plugin-postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - dbgate_data:/root/.dbgate
+
 volumes:
   postgres_data:
   redis_data:
+  dbgate_data:

@@ -3,6 +3,7 @@ package com.marketplace.auth.presentation;
 import com.marketplace.auth.application.LoginUseCase;
 import com.marketplace.auth.application.RefreshTokenUseCase;
 import com.marketplace.auth.application.RegisterUseCase;
+import com.marketplace.auth.application.ResendOtpUseCase;
 import com.marketplace.auth.application.TokenPair;
 import com.marketplace.auth.application.VerifyEmailUseCase;
 import com.marketplace.auth.application.command.LoginCommand;
@@ -11,6 +12,7 @@ import com.marketplace.auth.application.command.VerifyEmailCommand;
 import com.marketplace.auth.presentation.request.LoginRequest;
 import com.marketplace.auth.presentation.request.RefreshTokenRequest;
 import com.marketplace.auth.presentation.request.RegisterRequest;
+import com.marketplace.auth.presentation.request.ResendOtpRequest;
 import com.marketplace.auth.presentation.request.VerifyEmailRequest;
 import com.marketplace.auth.presentation.response.AuthResponse;
 import com.marketplace.shared.security.AuthenticatedUser;
@@ -30,15 +32,18 @@ public class AuthController {
     private final LoginUseCase loginUseCase;
     private final VerifyEmailUseCase verifyEmailUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
+    private final ResendOtpUseCase resendOtpUseCase;
 
     public AuthController(RegisterUseCase registerUseCase,
                           LoginUseCase loginUseCase,
                           VerifyEmailUseCase verifyEmailUseCase,
-                          RefreshTokenUseCase refreshTokenUseCase) {
+                          RefreshTokenUseCase refreshTokenUseCase,
+                          ResendOtpUseCase resendOtpUseCase) {
         this.registerUseCase = registerUseCase;
         this.loginUseCase = loginUseCase;
         this.verifyEmailUseCase = verifyEmailUseCase;
         this.refreshTokenUseCase = refreshTokenUseCase;
+        this.resendOtpUseCase = resendOtpUseCase;
     }
 
     @PostMapping("/register")
@@ -48,6 +53,12 @@ public class AuthController {
         );
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("userId", userId.toString(), "message", "Registration successful. Please check your email."));
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<Map<String, String>> resendOtp(@Valid @RequestBody ResendOtpRequest request) {
+        resendOtpUseCase.execute(request.email());
+        return ResponseEntity.ok(Map.of("message", "A new verification code has been sent to your email."));
     }
 
     @PostMapping("/verify")
