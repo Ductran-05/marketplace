@@ -40,6 +40,9 @@ mail:            ## Mở Mailhog UI
 dbgate:          ## Mở DbGate UI (xem DB bằng trình duyệt)
 	open http://localhost:3100
 
+redis:           ## Mở redis-cli console
+	docker exec -it marketplace-redis redis-cli
+
 swagger:         ## Mở Swagger UI
 	open http://localhost:8080/swagger-ui.html
 

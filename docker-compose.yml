@@ -63,7 +63,7 @@ services:
     ports:
       - "3100:3000"  # Web UI
     environment:
-      CONNECTIONS: pg
+      CONNECTIONS: pg,rd
       LABEL_pg: Marketplace DB
       SERVER_pg: postgres        # tên service trong compose network
       PORT_pg: 5432
@@ -71,6 +71,10 @@ services:
       PASSWORD_pg: marketplace
       DATABASE_pg: marketplace
       ENGINE_pg: postgres@dbgate-plugin-postgres
+      LABEL_rd: Marketplace Redis
+      SERVER_rd: redis
+      PORT_rd: 6379
+      ENGINE_rd: redis@dbgate-plugin-redis
     depends_on:
       postgres:
         condition: service_healthy
