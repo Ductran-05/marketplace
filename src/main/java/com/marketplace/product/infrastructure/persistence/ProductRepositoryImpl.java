@@ -61,6 +61,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                 p.getPrice().amount(),
                 p.getPrice().currency(),
                 p.getStockQuantity(),
+                p.getImageKey(),
                 p.getCreatedAt(),
                 p.getUpdatedAt()
         );
@@ -74,6 +75,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                 e.getDescription(),
                 new Money(e.getPriceAmount(), e.getPriceCurrency()),
                 e.getStockQuantity(),
+                e.getImageKey(),
                 e.getCreatedAt(),
                 e.getUpdatedAt()
         );

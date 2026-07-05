@@ -57,6 +57,24 @@ services:
       - "1025:1025"  # SMTP
       - "8025:8025"  # Web UI
 
+  minio:
+    image: minio/minio:latest
+    container_name: marketplace-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # Web Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   dbgate:
     image: dbgate/dbgate:latest
     container_name: marketplace-dbgate
@@ -85,3 +103,4 @@ volumes:
   postgres_data:
   redis_data:
   dbgate_data:
+  minio_data:

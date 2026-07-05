@@ -35,6 +35,9 @@ public class ProductJpaEntity {
     @Column(nullable = false)
     private int stockQuantity;
 
+    @Column(length = 500)
+    private String imageKey;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -45,7 +48,7 @@ public class ProductJpaEntity {
 
     public ProductJpaEntity(UUID id, UUID sellerId, String name, String description,
                             BigDecimal priceAmount, String priceCurrency, int stockQuantity,
-                            Instant createdAt, Instant updatedAt) {
+                            String imageKey, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.sellerId = sellerId;
         this.name = name;
@@ -53,6 +56,7 @@ public class ProductJpaEntity {
         this.priceAmount = priceAmount;
         this.priceCurrency = priceCurrency;
         this.stockQuantity = stockQuantity;
+        this.imageKey = imageKey;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -64,6 +68,7 @@ public class ProductJpaEntity {
     public BigDecimal getPriceAmount() { return priceAmount; }
     public String getPriceCurrency() { return priceCurrency; }
     public int getStockQuantity() { return stockQuantity; }
+    public String getImageKey() { return imageKey; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 }

@@ -101,7 +101,7 @@ Tất cả có default trong `application.yml`, không cần tạo `.env` khi de
 | Module | Domain | Application | Infrastructure | Presentation |
 |--------|--------|-------------|----------------|--------------|
 | auth | ✅ | ✅ Register/Login/Verify/Refresh/BecomeSeller | ✅ JWT filter, OTP Redis, mail listener | ✅ Controller đầy đủ |
-| product | ✅ Product, Money | ✅ CRUD + phân trang, ownership | ✅ JPA | ✅ @PreAuthorize SELLER (chưa có upload ảnh) |
+| product | ✅ Product, Money | ✅ CRUD + phân trang, ownership, upload ảnh | ✅ JPA, MinIO adapter | ✅ @PreAuthorize SELLER |
 | order | 🔲 | 🔲 | 🔲 | 🔲 |
 | payment | 🔲 | 🔲 | 🔲 | 🔲 |
 | notification | 🔲 | 🔲 | 🔲 | 🔲 |
@@ -117,8 +117,15 @@ register → mail OTP (Mailhog :8025) → verify → login → access+refresh to
 - Listener gửi mail: `@Async` + `@TransactionalEventListener` (chỉ chạy sau commit)
 - Lấy user hiện tại trong controller: `@AuthenticationPrincipal AuthenticatedUser user`
 
+## Cloud storage (MinIO)
+- Bucket `product-images`, tự tạo lúc app khởi động (`MinioImageStorage.ensureBucketExists`)
+- Key format: `products/{productId}/{uuid}.{ext}` — chỉ nhận JPEG/PNG/WebP, max 5MB
+- Client đọc ảnh qua **presigned URL** (hết hạn 15 phút) — tải thẳng từ MinIO, không qua app
+- MinIO Console: `make minio` (http://localhost:9001, minioadmin/minioadmin)
+- Đổi sang AWS S3 thật: chỉ cần đổi env `MINIO_*`, code giữ nguyên
+
 ## Lộ trình tiếp theo
-1. **Product**: CRUD, upload ảnh lên MinIO/S3
-2. **Order**: tạo order, Kafka event `order.placed`
-3. **Notification**: lắng nghe Kafka, gửi email xác nhận
-4. **Payment**: tích hợp Stripe / PayOS
+1. **Order**: tạo order, Kafka event `order.placed`, outbox pattern
+2. **Notification**: lắng nghe Kafka, gửi email xác nhận
+3. **Payment**: tích hợp Stripe / PayOS
+4. **Test + CI/CD**: unit/integration test (Testcontainers), GitHub Actions

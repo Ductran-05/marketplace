@@ -13,17 +13,20 @@ public class Product extends AggregateRoot {
     private String description;
     private Money price;
     private int stockQuantity;
+    private String imageKey;
     private final Instant createdAt;
     private Instant updatedAt;
 
     private Product(ProductId id, SellerId sellerId, String name, String description,
-                    Money price, int stockQuantity, Instant createdAt, Instant updatedAt) {
+                    Money price, int stockQuantity, String imageKey,
+                    Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.sellerId = sellerId;
         this.name = name;
         this.description = description;
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.imageKey = imageKey;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -34,12 +37,21 @@ public class Product extends AggregateRoot {
         validateStock(stockQuantity);
         Instant now = Instant.now();
         return new Product(new ProductId(UUID.randomUUID()), sellerId,
-                name, description, price, stockQuantity, now, now);
+                name, description, price, stockQuantity, null, now, now);
     }
 
     public static Product reconstitute(ProductId id, SellerId sellerId, String name, String description,
-                                       Money price, int stockQuantity, Instant createdAt, Instant updatedAt) {
-        return new Product(id, sellerId, name, description, price, stockQuantity, createdAt, updatedAt);
+                                       Money price, int stockQuantity, String imageKey,
+                                       Instant createdAt, Instant updatedAt) {
+        return new Product(id, sellerId, name, description, price, stockQuantity, imageKey, createdAt, updatedAt);
+    }
+
+    public void attachImage(String imageKey) {
+        if (imageKey == null || imageKey.isBlank()) {
+            throw new IllegalArgumentException("Image key is required");
+        }
+        this.imageKey = imageKey;
+        this.updatedAt = Instant.now();
     }
 
     public void update(String name, String description, Money price, int stockQuantity) {
@@ -74,6 +86,7 @@ public class Product extends AggregateRoot {
     public String getDescription() { return description; }
     public Money getPrice() { return price; }
     public int getStockQuantity() { return stockQuantity; }
+    public String getImageKey() { return imageKey; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
 }

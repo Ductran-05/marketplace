@@ -14,10 +14,11 @@ public record ProductResponse(
         BigDecimal price,
         String currency,
         int stockQuantity,
+        String imageUrl,
         Instant createdAt,
         Instant updatedAt
 ) {
-    public static ProductResponse from(Product p) {
+    public static ProductResponse from(Product p, String imageUrl) {
         return new ProductResponse(
                 p.getId().value(),
                 p.getSellerId().value(),
@@ -26,6 +27,7 @@ public record ProductResponse(
                 p.getPrice().amount(),
                 p.getPrice().currency(),
                 p.getStockQuantity(),
+                imageUrl,
                 p.getCreatedAt(),
                 p.getUpdatedAt()
         );

@@ -43,6 +43,9 @@ dbgate:          ## Mở DbGate UI (xem DB bằng trình duyệt)
 redis:           ## Mở redis-cli console
 	docker exec -it marketplace-redis redis-cli
 
+minio:           ## Mở MinIO Console (user/pass: minioadmin)
+	open http://localhost:9001
+
 swagger:         ## Mở Swagger UI
 	open http://localhost:8080/swagger-ui.html
 
