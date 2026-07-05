@@ -61,6 +61,9 @@ com.marketplace/
 - Response DTO dùng Java `record`
 - Không viết comment giải thích WHAT — chỉ comment khi WHY không rõ ràng
 
+## Quy ước bổ sung
+- Thư mục `bruno/` là collection test API (app Bruno) — **khi thêm/sửa endpoint phải thêm/sửa file `.bru` tương ứng**. Request cần auth dùng `auth: bearer` với `token: {{accessToken}}`; token được tự lưu vào environment bởi script post-response của `04-login.bru`.
+
 ## Lệnh hay dùng
 ```bash
 # Chạy infrastructure (DB, Redis, Kafka, Mail)
