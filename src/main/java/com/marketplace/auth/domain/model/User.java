@@ -61,6 +61,16 @@ public class User extends AggregateRoot {
         this.status = UserStatus.ACTIVE;
     }
 
+    public void becomeSeller() {
+        if (role == UserRole.SELLER) {
+            throw new IllegalStateException("User is already a seller");
+        }
+        if (status != UserStatus.ACTIVE) {
+            throw new IllegalStateException("Only active users can become sellers");
+        }
+        this.role = UserRole.SELLER;
+    }
+
     public boolean isActive() {
         return status == UserStatus.ACTIVE;
     }

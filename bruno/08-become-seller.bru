@@ -1,0 +1,20 @@
+meta {
+  name: 08 Become Seller
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{host}}/api/v1/auth/become-seller
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  Nâng role BUYER → SELLER. Sau đó PHẢI gọi 06 Refresh (hoặc login lại)
+  để nhận token mới chứa role SELLER — token cũ vẫn mang role BUYER.
+}

@@ -1,5 +1,6 @@
 package com.marketplace.auth.presentation;
 
+import com.marketplace.auth.application.BecomeSellerUseCase;
 import com.marketplace.auth.application.LoginUseCase;
 import com.marketplace.auth.application.RefreshTokenUseCase;
 import com.marketplace.auth.application.RegisterUseCase;
@@ -33,17 +34,20 @@ public class AuthController {
     private final VerifyEmailUseCase verifyEmailUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final ResendOtpUseCase resendOtpUseCase;
+    private final BecomeSellerUseCase becomeSellerUseCase;
 
     public AuthController(RegisterUseCase registerUseCase,
                           LoginUseCase loginUseCase,
                           VerifyEmailUseCase verifyEmailUseCase,
                           RefreshTokenUseCase refreshTokenUseCase,
-                          ResendOtpUseCase resendOtpUseCase) {
+                          ResendOtpUseCase resendOtpUseCase,
+                          BecomeSellerUseCase becomeSellerUseCase) {
         this.registerUseCase = registerUseCase;
         this.loginUseCase = loginUseCase;
         this.verifyEmailUseCase = verifyEmailUseCase;
         this.refreshTokenUseCase = refreshTokenUseCase;
         this.resendOtpUseCase = resendOtpUseCase;
+        this.becomeSellerUseCase = becomeSellerUseCase;
     }
 
     @PostMapping("/register")
@@ -82,5 +86,12 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<AuthenticatedUser> me(@AuthenticationPrincipal AuthenticatedUser user) {
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/become-seller")
+    public ResponseEntity<Map<String, String>> becomeSeller(@AuthenticationPrincipal AuthenticatedUser user) {
+        becomeSellerUseCase.execute(user.userId());
+        return ResponseEntity.ok(Map.of(
+                "message", "You are now a seller. Call /refresh or log in again to get a token with the new role."));
     }
 }

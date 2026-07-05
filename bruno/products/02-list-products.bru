@@ -1,0 +1,20 @@
+meta {
+  name: 02 List Products
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/v1/products?page=0&size=10
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 0
+  size: 10
+}
+
+docs {
+  Public — không cần token. Phân trang qua page/size, sắp xếp mới nhất trước.
+}

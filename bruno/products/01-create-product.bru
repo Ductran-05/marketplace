@@ -1,0 +1,36 @@
+meta {
+  name: 01 Create Product
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/api/v1/products
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "iPhone 15 Pro Max 256GB",
+    "description": "Hàng chính hãng VN/A, nguyên seal",
+    "price": 29990000,
+    "currency": "VND",
+    "stockQuantity": 10
+  }
+}
+
+script:post-response {
+  if (res.status === 201) {
+    bru.setEnvVar("productId", res.body.productId);
+  }
+}
+
+docs {
+  Cần role SELLER (chạy 08 Become Seller + 06 Refresh trước).
+  productId tự lưu vào environment cho các request sau.
+}

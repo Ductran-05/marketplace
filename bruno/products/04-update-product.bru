@@ -1,0 +1,29 @@
+meta {
+  name: 04 Update Product
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/api/v1/products/{{productId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "name": "iPhone 15 Pro Max 256GB - GIẢM GIÁ",
+    "description": "Hàng chính hãng VN/A, nguyên seal",
+    "price": 27990000,
+    "currency": "VND",
+    "stockQuantity": 8
+  }
+}
+
+docs {
+  Chỉ chủ sản phẩm (seller tạo ra nó) mới sửa được — user khác nhận NOT_PRODUCT_OWNER.
+}

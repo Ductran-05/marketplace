@@ -100,8 +100,8 @@ Tất cả có default trong `application.yml`, không cần tạo `.env` khi de
 
 | Module | Domain | Application | Infrastructure | Presentation |
 |--------|--------|-------------|----------------|--------------|
-| auth | ✅ | ✅ Register/Login/Verify/Refresh | ✅ JWT filter, OTP Redis, mail listener | ✅ Controller đầy đủ |
-| product | 🔲 | 🔲 | 🔲 | 🔲 |
+| auth | ✅ | ✅ Register/Login/Verify/Refresh/BecomeSeller | ✅ JWT filter, OTP Redis, mail listener | ✅ Controller đầy đủ |
+| product | ✅ Product, Money | ✅ CRUD + phân trang, ownership | ✅ JPA | ✅ @PreAuthorize SELLER (chưa có upload ảnh) |
 | order | 🔲 | 🔲 | 🔲 | 🔲 |
 | payment | 🔲 | 🔲 | 🔲 | 🔲 |
 | notification | 🔲 | 🔲 | 🔲 | 🔲 |
