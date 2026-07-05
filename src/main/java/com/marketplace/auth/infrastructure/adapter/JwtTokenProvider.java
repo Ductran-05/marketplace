@@ -38,6 +38,8 @@ public class JwtTokenProvider {
 
     private String buildToken(User user, long expiry, String type) {
         return Jwts.builder()
+                // jti đảm bảo mỗi token là duy nhất kể cả khi sinh trong cùng 1 giây (iat trùng)
+                .id(java.util.UUID.randomUUID().toString())
                 .subject(user.getId().toString())
                 .claim("email", user.getEmail().value())
                 .claim("role", user.getRole().name())

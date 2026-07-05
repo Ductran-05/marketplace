@@ -1,6 +1,7 @@
 package com.marketplace.auth.application;
 
 import com.marketplace.auth.application.command.LoginCommand;
+import com.marketplace.auth.application.port.RefreshTokenStore;
 import com.marketplace.auth.domain.model.Email;
 import com.marketplace.auth.domain.model.User;
 import com.marketplace.auth.domain.repository.UserRepository;
@@ -15,13 +16,16 @@ public class LoginUseCase {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenStore refreshTokenStore;
 
     public LoginUseCase(UserRepository userRepository,
                         PasswordEncoder passwordEncoder,
-                        JwtTokenProvider jwtTokenProvider) {
+                        JwtTokenProvider jwtTokenProvider,
+                        RefreshTokenStore refreshTokenStore) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenStore = refreshTokenStore;
     }
 
     public TokenPair execute(LoginCommand command) {
@@ -38,6 +42,7 @@ public class LoginUseCase {
 
         String accessToken = jwtTokenProvider.generateAccessToken(user);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+        refreshTokenStore.save(user.getId(), refreshToken);
         return new TokenPair(accessToken, refreshToken);
     }
 }

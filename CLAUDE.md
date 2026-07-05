@@ -97,15 +97,25 @@ Tất cả có default trong `application.yml`, không cần tạo `.env` khi de
 
 | Module | Domain | Application | Infrastructure | Presentation |
 |--------|--------|-------------|----------------|--------------|
-| auth | ✅ | ✅ Register/Login | ✅ JWT, JPA | ✅ Controller |
+| auth | ✅ | ✅ Register/Login/Verify/Refresh | ✅ JWT filter, OTP Redis, mail listener | ✅ Controller đầy đủ |
 | product | 🔲 | 🔲 | 🔲 | 🔲 |
 | order | 🔲 | 🔲 | 🔲 | 🔲 |
 | payment | 🔲 | 🔲 | 🔲 | 🔲 |
 | notification | 🔲 | 🔲 | 🔲 | 🔲 |
 
+## Auth flow (đã hoàn chỉnh, đã test end-to-end)
+```
+register → mail OTP (Mailhog :8025) → verify → login → access+refresh token
+→ gọi API với Bearer token → refresh (rotation: token cũ bị revoke)
+```
+- OTP: Redis key `otp:<email>`, TTL 15 phút, dùng 1 lần
+- Refresh token: Redis key `refresh:<userId>`, rotation mỗi lần refresh
+- JWT có `jti` để mỗi token unique (tránh trùng khi sinh cùng 1 giây)
+- Listener gửi mail: `@Async` + `@TransactionalEventListener` (chỉ chạy sau commit)
+- Lấy user hiện tại trong controller: `@AuthenticationPrincipal AuthenticatedUser user`
+
 ## Lộ trình tiếp theo
-1. **Auth**: JWT filter, refresh token, email verification
-2. **Product**: CRUD, upload ảnh lên MinIO/S3
-3. **Order**: tạo order, Kafka event `order.placed`
-4. **Notification**: lắng nghe Kafka, gửi email xác nhận
-5. **Payment**: tích hợp Stripe / PayOS
+1. **Product**: CRUD, upload ảnh lên MinIO/S3
+2. **Order**: tạo order, Kafka event `order.placed`
+3. **Notification**: lắng nghe Kafka, gửi email xác nhận
+4. **Payment**: tích hợp Stripe / PayOS
