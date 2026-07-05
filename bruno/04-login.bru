@@ -1,0 +1,30 @@
+meta {
+  name: 04 Login
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{host}}/api/v1/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{email}}",
+    "password": "{{password}}"
+  }
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setEnvVar("accessToken", res.body.accessToken);
+    bru.setEnvVar("refreshToken", res.body.refreshToken);
+  }
+}
+
+docs {
+  Login xong token TỰ ĐỘNG lưu vào environment (accessToken, refreshToken)
+  nhờ script post-response — các request sau dùng ngay, không copy tay.
+}
