@@ -133,7 +133,15 @@ register → mail OTP (Mailhog :8025) → verify → login → access+refresh to
 - Order snapshot tên+giá sản phẩm tại thời điểm đặt (không tham chiếu giá hiện tại).
 - PlaceOrder: 1 transaction — trừ kho + tạo order cùng sống chết.
 
+## Kafka
+- KRaft mode (không Zookeeper), 2 listener: `localhost:9092` (app trên host), `kafka:29092` (container khác — Kafka UI dùng)
+- Kafka UI: `make kafka-ui` (http://localhost:8090)
+- Topic `order.placed` (3 partitions) khai báo ở `KafkaTopicsConfig`
+- `OrderPlacedKafkaPublisher`: bridge Spring event → Kafka, key = orderId (giữ thứ tự theo order)
+- Message contract (`OrderPlacedMessage`) tách khỏi domain event — phẳng, ổn định cho consumer ngoài
+- ⚠️ Producer hiện tại "ngây thơ": crash giữa commit và send là mất event — Đợt 3 thay bằng Outbox
+
 ## Lộ trình tiếp theo
-1. **Order đợt 2-4**: KRaft Kafka + Kafka UI → producer `order.placed` → Outbox pattern → Notification consumer gửi mail
+1. **Order đợt 3-4**: Outbox pattern → Notification consumer gửi mail xác nhận đơn
 2. **Payment**: tích hợp Stripe / PayOS
 3. **Test + CI/CD**: unit/integration test (Testcontainers), GitHub Actions

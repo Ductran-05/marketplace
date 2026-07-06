@@ -46,6 +46,9 @@ redis:           ## Mở redis-cli console
 minio:           ## Mở MinIO Console (user/pass: minioadmin)
 	open http://localhost:9001
 
+kafka-ui:        ## Mở Kafka UI (xem topic, message, consumer group)
+	open http://localhost:8090
+
 swagger:         ## Mở Swagger UI
 	open http://localhost:8080/swagger-ui.html
 
