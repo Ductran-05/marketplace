@@ -61,6 +61,9 @@ com.marketplace/
 - Response DTO dùng Java `record`
 - Không viết comment giải thích WHAT — chỉ comment khi WHY không rõ ràng
 
+## Tài liệu
+Thư mục `docs/` chứa tài liệu kiến thức theo chủ đề (kiến trúc, hạ tầng, Flyway, auth flow, events, MinIO, testing, deployment) — cập nhật khi có khái niệm/quyết định quan trọng mới.
+
 ## Quy ước bổ sung
 - Thư mục `bruno/` là collection test API (app Bruno) — **khi thêm/sửa endpoint phải thêm/sửa file `.bru` tương ứng**. Request cần auth dùng `auth: bearer` với `token: {{accessToken}}`; token được tự lưu vào environment bởi script post-response của `04-login.bru`.
 

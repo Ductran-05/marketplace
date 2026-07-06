@@ -18,6 +18,10 @@ body:multipart-form {
   file: @file(assets/sample.png)
 }
 
+vars:pre-request {
+  productId: 68aabb02-57e1-4c9e-b1b7-5234e538186b
+}
+
 docs {
   Upload ảnh cho sản phẩm (chỉ chủ sản phẩm). Ảnh mẫu: bruno/assets/sample.png —
   đổi bằng cách click chọn file khác trong tab Body. Response trả imageKey + presigned imageUrl.
