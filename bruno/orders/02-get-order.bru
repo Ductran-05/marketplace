@@ -1,0 +1,19 @@
+meta {
+  name: 02 Get Order By Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/api/v1/orders/{{orderId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  Chỉ chủ đơn hàng xem được — user khác nhận NOT_ORDER_OWNER.
+}

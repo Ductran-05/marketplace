@@ -10,7 +10,7 @@ import com.marketplace.product.application.command.UpdateProductCommand;
 import com.marketplace.product.application.port.ImageStorage;
 import com.marketplace.product.domain.model.Product;
 import com.marketplace.product.presentation.request.ProductRequest;
-import com.marketplace.product.presentation.response.PageResponse;
+import com.marketplace.shared.presentation.PageResponse;
 import com.marketplace.product.presentation.response.ProductResponse;
 import com.marketplace.shared.security.AuthenticatedUser;
 import jakarta.validation.Valid;

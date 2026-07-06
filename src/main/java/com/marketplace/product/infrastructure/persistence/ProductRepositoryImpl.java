@@ -1,6 +1,6 @@
 package com.marketplace.product.infrastructure.persistence;
 
-import com.marketplace.product.domain.model.Money;
+import com.marketplace.shared.domain.Money;
 import com.marketplace.product.domain.model.Product;
 import com.marketplace.product.domain.model.ProductId;
 import com.marketplace.product.domain.model.SellerId;

@@ -1,4 +1,4 @@
-package com.marketplace.product.presentation.response;
+package com.marketplace.shared.presentation;
 
 import java.util.List;
 

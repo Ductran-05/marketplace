@@ -1,6 +1,7 @@
 package com.marketplace.product.domain.model;
 
 import com.marketplace.shared.domain.AggregateRoot;
+import com.marketplace.shared.domain.Money;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -66,6 +67,18 @@ public class Product extends AggregateRoot {
 
     public boolean isOwnedBy(UUID userId) {
         return sellerId.value().equals(userId);
+    }
+
+    public void decreaseStock(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+        if (quantity > stockQuantity) {
+            throw new IllegalStateException(
+                    "Insufficient stock for product '" + name + "': requested " + quantity + ", available " + stockQuantity);
+        }
+        this.stockQuantity -= quantity;
+        this.updatedAt = Instant.now();
     }
 
     private static void validateName(String name) {

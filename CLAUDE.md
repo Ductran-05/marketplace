@@ -105,7 +105,7 @@ Tất cả có default trong `application.yml`, không cần tạo `.env` khi de
 |--------|--------|-------------|----------------|--------------|
 | auth | ✅ | ✅ Register/Login/Verify/Refresh/BecomeSeller | ✅ JWT filter, OTP Redis, mail listener | ✅ Controller đầy đủ |
 | product | ✅ Product, Money | ✅ CRUD + phân trang, ownership, upload ảnh | ✅ JPA, MinIO adapter | ✅ @PreAuthorize SELLER |
-| order | 🔲 | 🔲 | 🔲 | 🔲 |
+| order | ✅ Order+OrderItem, state machine | ✅ PlaceOrder (trừ kho, snapshot giá), GetOrders | ✅ JPA 1-n, ProductCatalogAdapter | ✅ (chưa Kafka/outbox) |
 | payment | 🔲 | 🔲 | 🔲 | 🔲 |
 | notification | 🔲 | 🔲 | 🔲 | 🔲 |
 
@@ -127,8 +127,13 @@ register → mail OTP (Mailhog :8025) → verify → login → access+refresh to
 - MinIO Console: `make minio` (http://localhost:9001, minioadmin/minioadmin)
 - Đổi sang AWS S3 thật: chỉ cần đổi env `MINIO_*`, code giữ nguyên
 
+## Cross-module (modular monolith)
+- Module KHÔNG gọi repository/domain của module khác. Order → Product qua port `ProductCatalog` (order/application/port), adapter gọi UseCase của product (`GetProductsUseCase`, `DecreaseStockUseCase`). Khi tách microservices: thay adapter bằng HTTP client, port giữ nguyên.
+- `Money` và `PageResponse` là shared kernel: `shared/domain/Money`, `shared/presentation/PageResponse`.
+- Order snapshot tên+giá sản phẩm tại thời điểm đặt (không tham chiếu giá hiện tại).
+- PlaceOrder: 1 transaction — trừ kho + tạo order cùng sống chết.
+
 ## Lộ trình tiếp theo
-1. **Order**: tạo order, Kafka event `order.placed`, outbox pattern
-2. **Notification**: lắng nghe Kafka, gửi email xác nhận
-3. **Payment**: tích hợp Stripe / PayOS
-4. **Test + CI/CD**: unit/integration test (Testcontainers), GitHub Actions
+1. **Order đợt 2-4**: KRaft Kafka + Kafka UI → producer `order.placed` → Outbox pattern → Notification consumer gửi mail
+2. **Payment**: tích hợp Stripe / PayOS
+3. **Test + CI/CD**: unit/integration test (Testcontainers), GitHub Actions
