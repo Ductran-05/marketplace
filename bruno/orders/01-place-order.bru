@@ -22,6 +22,10 @@ body:json {
   }
 }
 
+vars:pre-request {
+  productId: 16d0139e-9a9c-45ba-bba0-50b0b25a67af
+}
+
 script:post-response {
   if (res.status === 201) {
     bru.setEnvVar("orderId", res.body.orderId);

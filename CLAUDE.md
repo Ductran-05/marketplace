@@ -139,9 +139,16 @@ register → mail OTP (Mailhog :8025) → verify → login → access+refresh to
 - Topic `order.placed` (3 partitions) khai báo ở `KafkaTopicsConfig`
 - `OrderPlacedKafkaPublisher`: bridge Spring event → Kafka, key = orderId (giữ thứ tự theo order)
 - Message contract (`OrderPlacedMessage`) tách khỏi domain event — phẳng, ổn định cho consumer ngoài
-- ⚠️ Producer hiện tại "ngây thơ": crash giữa commit và send là mất event — Đợt 3 thay bằng Outbox
+
+## Outbox pattern (event không thể mất)
+- `OrderPlacedOutboxWriter`: `@TransactionalEventListener(BEFORE_COMMIT)` — dòng outbox ghi CÙNG transaction với đơn hàng
+- `shared/outbox/`: `OutboxAppender` (serialize + ghi bảng), `OutboxRelay` (@Scheduled 2s: quét chưa processed → gửi Kafka có ack → đánh dấu; fail thì break giữ thứ tự, tick sau retry)
+- Bảng `outbox_events` (V5), partial index cho dòng chưa processed
+- Semantics: **at-least-once** — có thể gửi TRÙNG (crash giữa send và markProcessed) → consumer phải idempotent
+- Relay dùng `KafkaTemplate<String,String>` riêng (payload đã là JSON string, tránh serialize 2 lần)
+- Đã test: đặt hàng khi Kafka chết → 201 OK, event chờ trong outbox → Kafka sống lại → tự đến nơi
 
 ## Lộ trình tiếp theo
-1. **Order đợt 3-4**: Outbox pattern → Notification consumer gửi mail xác nhận đơn
+1. **Order đợt 4**: Notification module — Kafka consumer nghe `order.placed`, gửi mail xác nhận đơn (idempotent)
 2. **Payment**: tích hợp Stripe / PayOS
 3. **Test + CI/CD**: unit/integration test (Testcontainers), GitHub Actions
