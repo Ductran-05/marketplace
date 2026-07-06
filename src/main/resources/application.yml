@@ -29,8 +29,9 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
       group-id: marketplace-group
+      # Payload từ outbox là JSON string thô (không type header) — nhận String, tự parse bằng ObjectMapper
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest
 
   # Dev: Mailhog (docker) - không cần auth. Production: set env sang SMTP thật

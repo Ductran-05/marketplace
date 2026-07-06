@@ -31,8 +31,9 @@ public class PlaceOrderUseCase {
     }
 
     /**
-     * Tất cả trong 1 transaction: item nào thiếu hàng → toàn bộ trừ kho
-     * trước đó rollback, không có order nửa vời.
+     * SAGA (choreography): use case này KHÔNG trừ kho.
+     * Đơn sinh ra ở PENDING; product module nghe "order.placed" tự quyết định
+     * reserve/reject; order nghe kết quả để confirm/cancel.
      */
     @Transactional
     public OrderId execute(PlaceOrderCommand command) {
@@ -40,8 +41,6 @@ public class PlaceOrderUseCase {
 
         for (PlaceOrderCommand.Item item : command.items()) {
             var product = productCatalog.getProduct(item.productId());   // NOT_FOUND nếu không có
-            productCatalog.decreaseStock(item.productId(), item.quantity()); // INSUFFICIENT_STOCK nếu thiếu
-
             // Snapshot tên + giá tại thời điểm mua — seller đổi giá sau không ảnh hưởng đơn này
             orderItems.add(new OrderItem(product.id(), product.name(), product.price(), item.quantity()));
         }
@@ -50,7 +49,7 @@ public class PlaceOrderUseCase {
         orderRepository.save(order);
 
         List<DomainEvent> events = order.pullEvents();
-        events.forEach(eventPublisher::publishEvent);   // Đợt 3 sẽ thay bằng outbox → Kafka
+        events.forEach(eventPublisher::publishEvent);   // → outbox (BEFORE_COMMIT) → Kafka
 
         return order.getId();
     }

@@ -11,10 +11,8 @@ import java.util.UUID;
  */
 public interface ProductCatalog {
 
+    /** Đọc snapshot thông tin sản phẩm. Việc GIỮ KHO đi qua saga (Kafka), không qua port này. */
     ProductSnapshot getProduct(UUID productId);
-
-    /** Trừ kho; ném BusinessException(INSUFFICIENT_STOCK) nếu không đủ. */
-    void decreaseStock(UUID productId, int quantity);
 
     record ProductSnapshot(UUID id, String name, Money price) {}
 }

@@ -15,13 +15,28 @@ import java.util.Map;
 public class KafkaTopicsConfig {
 
     public static final String TOPIC_ORDER_PLACED = "order.placed";
+    public static final String TOPIC_INVENTORY_RESERVED = "inventory.reserved";
+    public static final String TOPIC_INVENTORY_REJECTED = "inventory.rejected";
+    public static final String TOPIC_ORDER_CONFIRMED = "order.confirmed";
 
     @Bean
     public NewTopic orderPlacedTopic() {
-        return TopicBuilder.name(TOPIC_ORDER_PLACED)
-                .partitions(3)
-                .replicas(1)
-                .build();
+        return TopicBuilder.name(TOPIC_ORDER_PLACED).partitions(3).replicas(1).build();
+    }
+
+    @Bean
+    public NewTopic inventoryReservedTopic() {
+        return TopicBuilder.name(TOPIC_INVENTORY_RESERVED).partitions(3).replicas(1).build();
+    }
+
+    @Bean
+    public NewTopic inventoryRejectedTopic() {
+        return TopicBuilder.name(TOPIC_INVENTORY_REJECTED).partitions(3).replicas(1).build();
+    }
+
+    @Bean
+    public NewTopic orderConfirmedTopic() {
+        return TopicBuilder.name(TOPIC_ORDER_CONFIRMED).partitions(3).replicas(1).build();
     }
 
     /**

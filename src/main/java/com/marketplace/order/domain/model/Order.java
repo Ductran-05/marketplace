@@ -1,5 +1,6 @@
 package com.marketplace.order.domain.model;
 
+import com.marketplace.order.domain.event.OrderConfirmedEvent;
 import com.marketplace.order.domain.event.OrderPlacedEvent;
 import com.marketplace.shared.domain.AggregateRoot;
 import com.marketplace.shared.domain.Money;
@@ -41,7 +42,7 @@ public class Order extends AggregateRoot {
         Instant now = Instant.now();
         Order order = new Order(new OrderId(UUID.randomUUID()), buyerId, items,
                 OrderStatus.PENDING, total, now, now);
-        order.registerEvent(new OrderPlacedEvent(order.id, buyerId, total, now));
+        order.registerEvent(new OrderPlacedEvent(order.id, buyerId, total, order.items, now));
         return order;
     }
 
@@ -53,6 +54,7 @@ public class Order extends AggregateRoot {
 
     public void confirm() {
         transition(OrderStatus.PENDING, OrderStatus.CONFIRMED);
+        registerEvent(new OrderConfirmedEvent(id, buyerId, totalAmount, Instant.now()));
     }
 
     public void markPaid() {

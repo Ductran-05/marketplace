@@ -2,17 +2,14 @@ package com.marketplace.order.domain.event;
 
 import com.marketplace.order.domain.model.BuyerId;
 import com.marketplace.order.domain.model.OrderId;
-import com.marketplace.order.domain.model.OrderItem;
 import com.marketplace.shared.domain.DomainEvent;
 import com.marketplace.shared.domain.Money;
 
 import java.time.Instant;
-import java.util.List;
 
-public record OrderPlacedEvent(
+public record OrderConfirmedEvent(
         OrderId orderId,
         BuyerId buyerId,
         Money totalAmount,
-        List<OrderItem> items,
         Instant occurredAt
 ) implements DomainEvent {}

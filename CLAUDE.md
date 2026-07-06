@@ -105,9 +105,9 @@ Tất cả có default trong `application.yml`, không cần tạo `.env` khi de
 |--------|--------|-------------|----------------|--------------|
 | auth | ✅ | ✅ Register/Login/Verify/Refresh/BecomeSeller | ✅ JWT filter, OTP Redis, mail listener | ✅ Controller đầy đủ |
 | product | ✅ Product, Money | ✅ CRUD + phân trang, ownership, upload ảnh | ✅ JPA, MinIO adapter | ✅ @PreAuthorize SELLER |
-| order | ✅ Order+OrderItem, state machine | ✅ PlaceOrder (trừ kho, snapshot giá), GetOrders | ✅ JPA 1-n, ProductCatalogAdapter | ✅ (chưa Kafka/outbox) |
+| order | ✅ Order+OrderItem, state machine, 2 events | ✅ PlaceOrder (saga), Confirm/Cancel, GetOrders | ✅ JPA 1-n, outbox writer, inventory consumer | ✅ |
 | payment | 🔲 | 🔲 | 🔲 | 🔲 |
-| notification | 🔲 | 🔲 | 🔲 | 🔲 |
+| notification | — | — | ✅ OrderConfirmedConsumer → mail | — |
 
 ## Auth flow (đã hoàn chỉnh, đã test end-to-end)
 ```
@@ -131,7 +131,7 @@ register → mail OTP (Mailhog :8025) → verify → login → access+refresh to
 - Module KHÔNG gọi repository/domain của module khác. Order → Product qua port `ProductCatalog` (order/application/port), adapter gọi UseCase của product (`GetProductsUseCase`, `DecreaseStockUseCase`). Khi tách microservices: thay adapter bằng HTTP client, port giữ nguyên.
 - `Money` và `PageResponse` là shared kernel: `shared/domain/Money`, `shared/presentation/PageResponse`.
 - Order snapshot tên+giá sản phẩm tại thời điểm đặt (không tham chiếu giá hiện tại).
-- PlaceOrder: 1 transaction — trừ kho + tạo order cùng sống chết.
+- **SAGA (choreography)** cho đặt hàng — xem `docs/10-saga.md`: PlaceOrder KHÔNG trừ kho, tạo đơn PENDING → Kafka `order.placed` → product reserve/reject (idempotent qua bảng `stock_reservations`) → order confirm/cancel → notification gửi mail khi `order.confirmed`. Consumer nhận String tự parse; message contract ở `shared/messaging/`.
 
 ## Kafka
 - KRaft mode (không Zookeeper), 2 listener: `localhost:9092` (app trên host), `kafka:29092` (container khác — Kafka UI dùng)
