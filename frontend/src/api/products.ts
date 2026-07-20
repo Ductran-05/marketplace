@@ -1,5 +1,6 @@
 import { apiClient } from './client'
-import type { PageResponse, ProductRequest, ProductResponse } from '../types/product'
+import type { PageResponse } from '../types/api'
+import type { ProductRequest, ProductResponse } from '../types/product'
 
 export async function listProducts(page = 0, size = 10): Promise<PageResponse<ProductResponse>> {
   const { data } = await apiClient.get<PageResponse<ProductResponse>>('/products', {

@@ -18,11 +18,3 @@ export interface ProductResponse {
   createdAt: string
   updatedAt: string
 }
-
-export interface PageResponse<T> {
-  items: T[]
-  page: number
-  size: number
-  totalItems: number
-  totalPages: number
-}

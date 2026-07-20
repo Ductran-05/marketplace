@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import * as productsApi from '../api/products'
+import * as ordersApi from '../api/orders'
 import { extractErrorMessage } from '../api/errors'
 import { ErrorBanner } from '../components/ErrorBanner'
+import { OrderStatusBadge } from '../components/OrderStatusBadge'
 import { Pagination } from '../components/Pagination'
 import type { PageResponse } from '../types/api'
-import type { ProductResponse } from '../types/product'
+import type { OrderResponse } from '../types/order'
 
 const PAGE_SIZE = 10
 
-export function ProductListPage() {
+export function MyOrdersPage() {
   const [page, setPage] = useState(0)
-  const [data, setData] = useState<PageResponse<ProductResponse> | null>(null)
+  const [data, setData] = useState<PageResponse<OrderResponse> | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -19,8 +20,8 @@ export function ProductListPage() {
     let cancelled = false
     setLoading(true)
     setError(null)
-    productsApi
-      .listProducts(page, PAGE_SIZE)
+    ordersApi
+      .listMyOrders(page, PAGE_SIZE)
       .then((result) => {
         if (!cancelled) setData(result)
       })
@@ -37,25 +38,24 @@ export function ProductListPage() {
 
   return (
     <div>
-      <h1>Sản phẩm</h1>
+      <h1>Đơn hàng của tôi</h1>
       <ErrorBanner message={error} />
       {loading && <p>Đang tải...</p>}
-      {!loading && data?.items.length === 0 && <p>Chưa có sản phẩm nào.</p>}
-      <div className="product-grid">
-        {data?.items.map((product) => (
-          <Link to={`/products/${product.id}`} key={product.id} className="product-card">
-            {product.imageUrl ? (
-              <img src={product.imageUrl} alt={product.name} />
-            ) : (
-              <div className="product-card-placeholder" />
-            )}
-            <h3>{product.name}</h3>
-            <p>
-              {product.price} {product.currency}
-            </p>
-          </Link>
+      {!loading && data?.items.length === 0 && <p>Bạn chưa có đơn hàng nào.</p>}
+      <ul className="order-list">
+        {data?.items.map((order) => (
+          <li key={order.id}>
+            <Link to={`/orders/${order.id}`} className="order-list-item">
+              <span>#{order.id.slice(0, 8)}</span>
+              <span>{new Date(order.createdAt).toLocaleString('vi-VN')}</span>
+              <OrderStatusBadge status={order.status} />
+              <span>
+                {order.totalAmount} {order.currency}
+              </span>
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
       {data && <Pagination page={data.page} totalPages={data.totalPages} onChange={setPage} />}
     </div>
   )

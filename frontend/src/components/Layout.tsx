@@ -20,6 +20,7 @@ export function Layout() {
           {user ? (
             <>
               {user.role === 'SELLER' && <Link to="/products/new">+ Sản phẩm mới</Link>}
+              <Link to="/orders">Đơn hàng của tôi</Link>
               <Link to="/account">
                 {user.email} ({user.role})
               </Link>

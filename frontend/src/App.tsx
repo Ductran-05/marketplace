@@ -9,6 +9,8 @@ import { ProductListPage } from './pages/ProductListPage'
 import { ProductDetailPage } from './pages/ProductDetailPage'
 import { ProductFormPage } from './pages/ProductFormPage'
 import { AccountPage } from './pages/AccountPage'
+import { OrderDetailPage } from './pages/OrderDetailPage'
+import { MyOrdersPage } from './pages/MyOrdersPage'
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
 
         <Route element={<RequireAuth />}>
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/orders" element={<MyOrdersPage />} />
+          <Route path="/orders/:id" element={<OrderDetailPage />} />
         </Route>
 
         <Route element={<RequireRole role="SELLER" />}>

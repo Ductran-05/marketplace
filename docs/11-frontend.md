@@ -2,7 +2,7 @@
 
 ## Mục tiêu
 
-Backend đã đủ auth + product để test end-to-end nhưng chỉ qua Bruno/Swagger. Thêm 1 SPA React ở `/frontend` (cùng repo, monorepo) để vừa học React vừa có UI thật thao tác với API — v1 gồm auth flow (register/verify/login) và product listing/CRUD.
+Backend đã đủ auth + product để test end-to-end nhưng chỉ qua Bruno/Swagger. Thêm 1 SPA React ở `/frontend` (cùng repo, monorepo) để vừa học React vừa có UI thật thao tác với API — v1 gồm auth flow (register/verify/login) và product listing/CRUD. v1.1 thêm flow đặt hàng (mua ngay + xem đơn) gọi vào order module (saga) đã có sẵn ở backend.
 
 ## Stack & lý do tối giản
 
@@ -35,6 +35,14 @@ Hệ quả: interceptor phải refresh khi gặp 403 (không phải 401 như con
 - Không có trang "sản phẩm của tôi" riêng — backend không có endpoint đó. Seller quản lý sản phẩm qua trang public list/detail, nút Sửa/Xóa chỉ hiện khi `product.sellerId === user.userId`.
 - Không có test tự động (Vitest/Testing Library) — phù hợp tinh thần tối giản của learning project; cân nhắc thêm sau nếu app lớn hơn.
 
+## Flow đặt hàng (v1.1) — "Mua ngay" thay vì giỏ hàng
+
+Order module backend hỗ trợ đơn nhiều sản phẩm (`items[]`) nhưng frontend chỉ làm nút **"Mua ngay"** trên trang chi tiết sản phẩm (1 sản phẩm/đơn, chọn số lượng) — vẫn gọi đúng contract `items[]` nên thêm giỏ hàng sau này không cần đổi API, chỉ đổi UI. Quyết định vì giỏ hàng đầy đủ (state riêng, trang checkout nhiều dòng) là khối lượng công việc khác hẳn, không cần thiết cho mục tiêu học tập hiện tại.
+
+**Không có nút hủy đơn**: backend không có endpoint cho buyer tự hủy — `CANCELLED` chỉ do saga tự set khi thiếu kho (`inventory.rejected` → `CancelOrderUseCase`, xem `docs/10-saga.md`). Không tự thêm UI cho việc backend chưa hỗ trợ.
+
+**Polling thay vì push**: `POST /orders` trả `201` ngay với đơn ở trạng thái `PENDING` — kết quả thật (CONFIRMED/CANCELLED) đến sau vài giây qua saga (Kafka), không có WebSocket/SSE nào expose ra frontend. `OrderDetailPage` tự poll `GET /orders/:id` mỗi 2s (khớp tick của outbox relay) khi status còn `PENDING`, tối đa 15 lần (~30s) rồi dừng và báo "xử lý lâu hơn dự kiến" thay vì poll vô hạn.
+
 ## Chạy
 
 ```bash
@@ -49,3 +57,5 @@ Cần backend chạy song song (`make run` hoặc `./mvnw spring-boot:run`, cổ
 - TanStack Query nếu sau này cache/invalidate phức tạp hơn.
 - Cookie httpOnly cho token nếu cần bảo mật production thật (cần sửa backend).
 - Trang "sản phẩm của tôi" nếu backend thêm endpoint tương ứng.
+- Giỏ hàng đầy đủ (nhiều sản phẩm/đơn) nếu cần — contract `items[]` đã sẵn sàng, chỉ cần đổi UI.
+- Nút hủy đơn cho buyer nếu backend thêm endpoint tương ứng.
