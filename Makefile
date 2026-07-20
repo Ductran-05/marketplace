@@ -1,4 +1,4 @@
-.PHONY: help up down logs ps run dev build test clean reset-db db mail swagger health
+.PHONY: help up down logs ps run dev build test clean reset-db db mail swagger health frontend
 
 help:            ## Liệt kê các lệnh
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -54,3 +54,7 @@ swagger:         ## Mở Swagger UI
 
 health:          ## Kiểm tra app còn sống không
 	@curl -s localhost:8080/actuator/health | python3 -m json.tool
+
+frontend:        ## Cài đặt (nếu cần) và chạy dev server React (http://localhost:5173)
+	@test -d frontend/node_modules || (cd frontend && npm install)
+	cd frontend && npm run dev

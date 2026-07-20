@@ -14,6 +14,7 @@ Tổng hợp kiến thức trong quá trình xây dựng — đọc lại khi qu
 | [08-deployment-cicd.md](08-deployment-cicd.md) | Các con đường deploy, độ khó thay thế từng dịch vụ, kế hoạch CI/CD |
 | [09-erd.md](09-erd.md) | ERD database (mermaid) + các quyết định thiết kế schema |
 | [10-saga.md](10-saga.md) | Saga choreography cho flow đặt hàng: topics, idempotency, compensation, trade-off |
+| [11-frontend.md](11-frontend.md) | React SPA: stack tối giản, Vite dev proxy thay CORS, quản lý token, phát hiện backend chỉ trả 403 |
 
 ## Sơ đồ kiến trúc trực quan
 
